@@ -1,0 +1,582 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Real-Time Translator</title>
+
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Bootstrap Link -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <!-- Bootstrap Link -->
+
+
+  <!-- Font Awesome Cdn -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+  <!-- Font Awesome Cdn -->
+
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap" rel="stylesheet">
+  <!-- Google Fonts -->
+
+  <style>
+    /* Container styling for the text area and icon */
+    .speech-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    /* Text area styling */
+    #input-text {
+      padding-right: 40px;
+      font-size: 16px;
+      width: 100%;
+    }
+
+    /* Microphone icon styling */
+    .mic-icon {
+      position: absolute;
+      right: 10px;
+      cursor: pointer;
+      width: 24px;
+      height: 24px;
+
+      transition: transform 0.3s ease;
+    }
+
+    /* Animation styling when speech recognition is active */
+    .listening .mic-icon {
+      animation: pulse 1s infinite;
+    }
+
+    /* Pulse animation */
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.2);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    /* Container styling for the text area and icon */
+    .text-to-speech-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    /* Text area styling */
+    #output-text {
+      padding-right: 40px;
+      font-size: 16px;
+      width: 100%;
+    }
+
+    /* Speaker icon styling */
+    .speaker-icon {
+      position: absolute;
+      right: 10px;
+      cursor: pointer;
+      width: 24px;
+      height: 24px;
+      /* Makes icon white */
+      transition: transform 0.3s ease;
+    }
+
+    .image-grid img {
+      cursor: pointer;
+      /* Change cursor to pointer on hover */
+      transition: transform 0.2s;
+      /* Add a smooth transition effect */
+    }
+
+    .image-grid img:hover {
+      transform: scale(1.05);
+      /* Slightly enlarge the image on hover */
+    }
+
+
+    /* Pulse animation when speaking */
+    .speaking .speaker-icon {
+      animation: pulse 1s infinite;
+    }
+
+    /* Pulse animation */
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.2);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Navbar Start -->
+  <nav class="navbar navbar-expand-lg" id="navbar">
+    <div class="container">
+      <a class="navbar-brand" href="index.html" id="logo"><span>T</span>ranslator</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mynavbar">
+        <span><i class="fa-solid fa-bars"></i></span>
+      </button>
+      <div class="collapse navbar-collapse" id="mynavbar">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link active" href="#TextToText">Text To Text</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#TextToImage">Text To Image</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#about">About</a>
+          </li>
+        </ul>
+      </div>
+      <button id="logout-button"
+        style="width: 100px; font-size: medium; font-weight: 700; border-radius: 10px; padding: 10px; background-color: #ffa500;">Logout</button>
+      <!-- Logout button -->
+  </nav>
+
+  <script>
+    // Function to check for email in local storage
+    function checkLogin() {
+      // Logout function to clear local storage and redirect to login page
+      document.getElementById('logout-button').addEventListener('click', function () {
+        localStorage.removeItem('email'); // Remove email from local storage
+        window.location.href = 'Login.html'; // Redirect to login page
+      });
+
+      window.addEventListener("pageshow", function (event) {
+        const email = localStorage.getItem('email'); // Check if email exists in local storage
+      if (!email) {
+        // Redirect to the login page if email is not found
+        window.location.href = 'Login.html'; // Replace with your actual login page URL
+      } else {
+        // document.getElementById('email-placeholder').innerText = email; // Display email if found
+      }
+      });
+
+      
+    }
+
+    // Call checkLogin function after the page loads
+    window.onload = checkLogin;
+  </script>
+  <!-- Navbar End -->
+
+
+
+
+
+  <!-- Home Section Start -->
+  <div class="home">
+    <div class="content">
+      <h5>Welcome To Real-Time Translator Website</h5>
+      <h1>Translate to <span class="changecontent"></span></h1>
+      <p>Translate and Transform.</p>
+      <a href="#TextToText">Start Translating</a>
+    </div>
+  </div>
+  <!-- Home Section End -->
+
+
+
+
+
+  <!-- Section Transli Start -->
+  <section class="book" id="TextToText">
+    <div class="container">
+      <div class="main-txt">
+        <h1>Text to Text Generator</h1>
+      </div>
+      <div class="row">
+
+        <div class="col-md-6 py-3 py-md-0">
+          <div class="card">
+            <img src="./images/TT-4.jpg" alt="">
+          </div>
+        </div>
+        <div class="col-md-6 py-3 py-md-0">
+          <label for="source-language">Source Language:</label>
+          <select id="source-language" style="background-color: aliceblue;">
+            <option value="en">English</option>
+            <option value="fr">French</option>
+            <option value="es">Spanish</option>
+            <!-- Add more language options -->
+          </select>
+
+          <label for="target-language">Target Language:</label>
+          <select id="target-language">
+            <option value="en">English</option>
+            <option value="fr">French</option>
+            <option value="es">Spanish</option>
+            <option value="de">German</option>
+            <option value="it">Italian</option>
+            <option value="pt">Portuguese</option>
+            <option value="nl">Dutch</option>
+            <option value="ru">Russian</option>
+            <option value="ja">Japanese</option>
+            <option value="zh-CN">Chinese (Simplified)</option>
+            <option value="ko">Korean</option>
+            <option value="ar">Arabic</option>
+            <option value="tr">Turkish</option>
+            <option value="pl">Polish</option>
+            <option value="sv">Swedish</option>
+            <option value="no">Norwegian</option>
+            <option value="fi">Finnish</option>
+            <option value="da">Danish</option>
+            <option value="hi">Hindi</option>
+            <option value="bn">Bengali</option>
+            <option value="te">Telugu</option>
+            <option value="mr">Marathi</option>
+            <option value="ta">Tamil</option>
+            <option value="gu">Gujarati</option>
+            <option value="kn">Kannada</option>
+            <option value="ur">Urdu</option>
+            <option value="ml">Malayalam</option>
+            <option value="pa">Punjabi</option>
+            <option value="or">Odia</option>
+            <option value="as">Assamese</option>
+            <option value="ne">Nepali</option>
+            <option value="si">Sinhala</option>
+            <option value="my">Burmese</option>
+            <option value="th">Thai</option>
+            <option value="vi">Vietnamese</option>
+            <option value="id">Indonesian</option>
+            <option value="ms">Malay</option>
+            <option value="tl">Filipino</option>
+            <option value="km">Khmer</option>
+            <option value="lo">Lao</option>
+            <option value="ka">Georgian</option>
+            <option value="am">Amharic</option>
+            <option value="om">Oromo</option>
+            <option value="ig">Igbo</option>
+            <option value="yo">Yoruba</option>
+            <option value="ha">Hausa</option>
+            <option value="sw">Swahili</option>
+            <option value="mg">Malagasy</option>
+            <option value="sn">Shona</option>
+            <option value="rw">Kinyarwanda</option>
+            <option value="so">Somali</option>
+            <option value="st">Sesotho</option>
+            <option value="tn">Setswana</option>
+            <option value="xh">isiXhosa</option>
+            <option value="zu">isiZulu</option>
+            <option value="ny">Chichewa</option>
+            <option value="ee">Ewe</option>
+            <option value="ak">Akan</option>
+            <option value="ig">Igbo</option>
+            <option value="ln">Lingala</option>
+            <option value="sg">Sango</option>
+            <option value="wo">Wolof</option>
+            <option value="ff">Fulfulde</option>
+            <option value="ha">Hausa</option>
+            <option value="ki">Kikuyu</option>
+            <option value="lu">Luba-Katanga</option>
+            <option value="ss">SiSwati</option>
+            <option value="ts">Tsonga</option>
+            <option value="ve">Venda</option>
+            <option value="nr">isiNdebele</option>
+            <option value="dz">Dzongkha</option>
+            <option value="bo">Tibetan</option>
+            <option value="si">Sinhala</option>
+            <option value="km">Khmer</option>
+
+
+
+            <!-- Add more language options -->
+          </select>
+
+          <label for="input-text">Input Text:</label>
+          <!-- <textarea id="input-text" rows="4" cols="50"></textarea> -->
+          <div class="speech-container">
+            <textarea id="input-text" rows="4" cols="50"></textarea>
+            <img src="https://img.icons8.com/ios-glyphs/30/microphone.png" alt="Mic Icon" class="mic-icon"
+              onclick="startRecognition()">
+          </div>
+
+          <button onclick="translateText()" style="margin-top: 20px; border-radius: 20px;">Translate</button>
+          <br>
+
+          <label for="output-text">Translated Text:</label>
+          <!-- <textarea id="output-text" rows="4" cols="50" readonly></textarea> -->
+          <div class="text-to-speech-container">
+            <textarea id="output-text" rows="4" cols="50" readonly></textarea>
+            <img src="https://img.icons8.com/ios-glyphs/30/speaker.png" alt="Speaker Icon" class="speaker-icon"
+              onclick="speakText()">
+          </div>
+        </div>
+
+      </div>
+    </div>
+    </div>
+
+
+
+    <script>
+      async function translateText() {
+        const sourceLanguage = document.getElementById("source-language").value;
+        const targetLanguage = document.getElementById("target-language").value;
+        const inputText = document.getElementById("input-text").value;
+
+        // Use MyMemory API with correct URL formatting
+        const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(inputText)}&langpair=${sourceLanguage}|${targetLanguage}`;
+
+        try {
+          const response = await fetch(url);
+          const data = await response.json();
+
+          if (data.responseData && data.responseData.translatedText) {
+            document.getElementById("output-text").value = data.responseData.translatedText;
+          } else {
+            document.getElementById("output-text").value = "Translation failed. Please try again.";
+          }
+        } catch (error) {
+          console.error("Translation failed:", error);
+          document.getElementById("output-text").value = "Translation failed. Please try again.";
+        }
+      }
+    </script>
+
+
+
+    </div>
+    </div>
+  </section>
+  <!-- Section Transli End -->
+
+  <!--section Image Generator-->
+  <section class="about" id="TextToImage" style="background-color: aliceblue">
+    <div class="container">
+
+      <div class="main-txt">
+        <h1>Text - Image <span>Generator</span></h1>
+      </div>
+
+      <div class="row" style="margin-top: 50px;">
+
+        <div class="col-md-6 py-3 py-md-0">
+          <div class="card">
+            <img src="./images/TT-5.jpg" alt="">
+          </div>
+        </div>
+        <div class="col-md-6 py-3 py-md-0">
+
+          <form id="imageForm">
+            <label for="query">Enter text to search images:</label>
+            <br>
+            <br>
+            <input id="query" style="padding: 10px; border-radius: 10px; width: 100%;" type="text" name="query" required
+              placeholder="e.g., sunset beach">
+            <br>
+            <br>
+            <button type="submit" style="margin-top: 20px; border-radius: 20px;">Search Images</button>
+          </form>
+
+
+          <div id="imageDisplay" class="image-grid"></div>
+
+        </div>
+
+        <script src="script.js"></script>
+
+
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- About Start -->
+  <section class="about" id="about">
+    <div class="container">
+
+      <div class="main-txt">
+        <h1>About <span>Us</span></h1>
+      </div>
+
+      <div class="row" style="margin-top: 50px;">
+
+        <div class="col-md-6 py-3 py-md-0">
+          <div class="card">
+            <img src="./images/TT-14.jpg" alt="">
+          </div>
+        </div>
+
+        <div class="col-md-6 py-3 py-md-0">
+          <p>TranslateX is an innovative web application developed during the hackathon conducted by Vignan Institutes,
+            designed to facilitate seamless translation of text and images across multiple languages. The platform
+            empowers users to communicate effectively in a globalized world by providing real-time translations for both
+            written content and visual elements.</p>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+  <!-- About End -->
+
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+    crossorigin="anonymous"></script>
+
+
+  <script>
+    // Function to start speech recognition
+
+    //     document.getElementById("imageForm").addEventListener("submit", async function (event) {
+    //     event.preventDefault();
+    //     const query = document.getElementById("query").value;
+    //     const apiKey = 'pXBuV_LqKTVHkwCwsdW8T6r2XV__G9mgOfMePdeFbIc'; // Your API Key
+
+    //     try {
+    //         const response = await fetch(`https://api.example.com/search/images?query=${encodeURIComponent(query)}&api_key=${apiKey}`);
+
+    //         if (!response.ok) {
+    //             throw new Error(`HTTP error! status: ${response.status}`);
+    //         }
+
+    //         const data = await response.json();
+    //         console.log(data); // Log to see the structure
+
+    //         if (data.images && data.images.length > 0) {
+    //             displayImages(data.images);
+    //         } else {
+    //             console.error("No images found");
+    //             alert("No images found for your search.");
+    //         }
+    //     } catch (error) {
+    //         console.error("Error fetching images:", error);
+    //         alert("Failed to load images. Please try again.");
+    //     }
+    // });
+
+    // function displayImages(images) {
+    //     const imageDisplay = document.getElementById("imageDisplay");
+    //     imageDisplay.innerHTML = ""; // Clear previous images
+
+    //     images.forEach(image => {
+    //         const imgElement = document.createElement("img");
+    //         imgElement.src = image.url; // Adjust according to your API response
+    //         imgElement.alt = "Generated Image";
+    //         imgElement.style.width = "100px"; // Set your desired width
+
+    //         // Create a link to download the image
+    //         const downloadLink = document.createElement("a");
+    //         downloadLink.href = image.url; // Link to the image URL
+    //         downloadLink.download = ""; // This attribute tells the browser to download the file
+    //         downloadLink.appendChild(imgElement);
+
+    //         // Append to the image display container
+    //         imageDisplay.appendChild(downloadLink);
+    //     });
+    // }
+
+
+    function startRecognition() {
+      // Check if the browser supports the SpeechRecognition API
+      if (!('webkitSpeechRecognition' in window)) {
+        alert("Sorry, your browser doesn't support speech recognition.");
+        return;
+      }
+
+      // Create a new instance of the SpeechRecognition API
+      const recognition = new webkitSpeechRecognition();
+      recognition.lang = 'en-US';
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      // Add 'listening' class to show animation
+      document.querySelector('.speech-container').classList.add('listening');
+
+      // Start speech recognition
+      recognition.start();
+
+      // Handle the result and display it in the textarea
+      recognition.onresult = function (event) {
+        const transcript = event.results[0][0].transcript;
+        document.getElementById('input-text').value += transcript;
+      };
+
+      // Remove 'listening' class when recognition ends
+      recognition.onend = function () {
+        document.querySelector('.speech-container').classList.remove('listening');
+      };
+
+      // Handle any errors
+      recognition.onerror = function (event) {
+        console.error("Speech recognition error:", event.error);
+        document.querySelector('.speech-container').classList.remove('listening');
+        alert("An error occurred: " + event.error);
+      };
+    }
+  </script>
+
+  <script>
+    // Function to trigger text-to-speech
+    function speakText() {
+      const text = document.getElementById('output-text').value;
+
+      // Check if there is text to speak
+      if (text.trim() === '') {
+        alert('No text available to read.');
+        return;
+      }
+
+      // Create a new SpeechSynthesisUtterance instance
+      const utterance = new SpeechSynthesisUtterance(text);
+
+      // Add 'speaking' class to show animation
+      document.querySelector('.text-to-speech-container').classList.add('speaking');
+
+      // Start speaking
+      window.speechSynthesis.speak(utterance);
+
+      // Remove 'speaking' class when speaking ends
+      utterance.onend = function () {
+        document.querySelector('.text-to-speech-container').classList.remove('speaking');
+      };
+    }
+  </script>
+  <!-- <script>
+    // Function to display email in the navbar
+    function displayEmail() {
+      const userEmail = localStorage.getItem('email'); // Get email from local storage
+      const emailPlaceholder = document.getElementById('user-email'); // Get the placeholder element
+
+      if (userEmail) {
+        emailPlaceholder.textContent = userEmail; // Display the email
+      }
+    }
+
+    // Call the function on page load
+    window.onload = displayEmail;
+  </script> -->
+
+</body>
+
+</html>

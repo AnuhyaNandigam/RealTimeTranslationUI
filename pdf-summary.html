@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Summary Generator</title>
+    <link rel="stylesheet" href="pdf style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>PDF Summary Generator</h1>
+        <form id="pdfForm">
+            <input type="file" id="pdfFile" accept=".pdf" required>
+            <button type="submit">Generate Summary</button>
+        </form>
+        <div class="summary" id="summaryContainer" style="display: none;">
+            <h2>Summary:</h2>
+            <textarea id="summaryOutput" readonly></textarea>
+        </div>
+        <div id="loading" style="display: none;">Generating summary, please wait...</div>
+    </div>
+    <script src="pdf script.js"></script>
+</body>
+</html>
